@@ -4579,16 +4579,16 @@ a.Cart-title {
 }
 .Slider_carousel .Slider-box {
   /*overflow: hidden;*/
-  /*width: auto;*/
-  /*height: auto;*/
+  width: auto;
+  height: auto;
   padding: 0px;
   /*margin-right: -19px;*/
 
-  height: 400px;
+  /*height: 400px;*/
   display: flex;
   overflow-x: scroll;
-  width: 650px;
-  flex-direction: column;
+  /*width: 650px;*/
+  /*flex-direction: column;*/
   justify-content: center;
   align-items: flex-start;
   margin-right: 0;

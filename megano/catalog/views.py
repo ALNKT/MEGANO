@@ -2,7 +2,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from catalog.models import Category
-from catalog.serializers import CategorySerializer
+from catalog.serializers import CategorySerializer, TagsSerializer
+from products.models import Tag
 
 
 class CategoryView(APIView):
@@ -15,4 +16,12 @@ class CategoryView(APIView):
             categories.append({'id': category.id, 'title': category.title, 'subcategories': subcategories,
                                'href': category.href, 'image': category.image})
         serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+
+class TagsView(APIView):
+
+    def get(self, request):
+        tags = Tag.objects.all()
+        serializer = TagsSerializer(tags, many=True)
         return Response(serializer.data)

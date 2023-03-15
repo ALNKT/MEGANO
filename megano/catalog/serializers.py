@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from catalog.models import Category, CategoryImage
+from products.models import Tag
 
 
 class CategoryImageSerializer(serializers.ModelSerializer):
@@ -24,3 +25,10 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'title', 'image', 'href', 'subcategories']
+
+
+class TagsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tag
+        exclude = ['product']
