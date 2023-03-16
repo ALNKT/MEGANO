@@ -117,8 +117,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR.parent, 'diploma-frontend', 'frontend', 'static'),)
 
-MEDIA_URL = 'media/'
+MEDIA_URL = 'product/'
 MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'diploma-frontend', 'frontend')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

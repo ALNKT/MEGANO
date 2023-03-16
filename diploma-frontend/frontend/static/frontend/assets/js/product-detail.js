@@ -19,6 +19,7 @@ var mix = {
                     ...this.product,
                     ...data
                 }
+                this.photoSrc = this.product.photoSrc[0]
             }).catch(() => {
                 this.product = {}
                 console.warn('Ошибка при получении товара')
@@ -48,6 +49,7 @@ var mix = {
     data() {
         return {
             product : {},
+            photoSrc: '',
             count: 1,
             review: {
                 author: '',
