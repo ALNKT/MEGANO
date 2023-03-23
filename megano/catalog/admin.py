@@ -1,20 +1,20 @@
 from django.contrib import admin
-from catalog.models import Category, CategoryImage
+from catalog.models import Category, CategoryIcons
 
 
 class ImageCategory(admin.TabularInline):
-    model = CategoryImage
+    model = CategoryIcons
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     inlines = [ImageCategory]
-    list_display = ['pk', 'title', 'href', 'parent', 'active']
+    list_display = ['pk', 'title', 'parent', 'active', 'favourite']
     list_display_links = ['pk', 'title']
-    list_filter = ['parent', 'active']
+    list_filter = ['parent', 'active', 'favourite']
     search_fields = ['title']
     ordering = ['parent', 'active']
-    actions = ['make_active', 'make_inactive']
+    actions = ['make_active', 'make_inactive', 'make_favourite', 'make_not_favourite']
 
     @admin.action(description='Отметить, как активная')
     def make_active(self, request, category):
@@ -26,8 +26,18 @@ class CategoryAdmin(admin.ModelAdmin):
         updated = category.update(active=False)
         self.message_user(request, message=f'Категорий отмечено НЕАКТИВНОЙ: {updated}')
 
+    @admin.action(description='Отметить, как избранная')
+    def make_favourite(self, request, category):
+        updated = category.update(favourite=True)
+        self.message_user(request, message=f'Категорий отмечено ИЗБРАННОЙ: {updated}')
 
-@admin.register(CategoryImage)
+    @admin.action(description='Отметить, как неизбранная')
+    def make_not_favourite(self, request, category):
+        updated = category.update(favourite=False)
+        self.message_user(request, message=f'Категорий отмечено НЕИЗБРАННОЕ: {updated}')
+
+
+@admin.register(CategoryIcons)
 class CategoryImageAdmin(admin.ModelAdmin):
     list_display = ['pk', 'alt', 'category']
     list_display_links = ['pk', 'alt']

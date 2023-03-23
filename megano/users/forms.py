@@ -8,7 +8,7 @@ from users.models import Profile
 
 
 class UserRegistrationForm(UserCreationForm):
-    fullname = forms.CharField(required=True, label='Ф.И.О.', widget=forms.TextInput)
+    fullName = forms.CharField(required=True, label='Ф.И.О.', widget=forms.TextInput)
     phone = forms.CharField(required=True, label='Номер телефона', widget=forms.TextInput)
     password1 = forms.CharField(required=True, label='Пароль', widget=forms.PasswordInput,
                                 help_text=password_validation.password_validators_help_text_html())
@@ -23,7 +23,7 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username", 'fullname', 'email', 'phone', 'password1', 'password2')
+        fields = ("username", 'fullName', 'email', 'phone', 'password1', 'password2')
         field_classes = {"username": UsernameField}
 
     def clean_phone(self):

@@ -1,11 +1,10 @@
-from django.contrib.auth.models import User
 from django.db import models
 
 from catalog.models import Category
 
 
 def product_image_directory_path(instance: 'ProductImage', filename):
-    return f'static/frontend/assets/img/content/home/products/{instance.product.pk}/{filename}'
+    return f'products/images/{instance.product.pk}/{filename}'
 
 
 class Product(models.Model):
@@ -18,9 +17,7 @@ class Product(models.Model):
     date = models.DateTimeField(auto_now_add=True, verbose_name='дата создания')
     limited_edition = models.BooleanField(default=False, verbose_name='ограниченная серия')
     freeDelivery = models.BooleanField(default=False, verbose_name='бесплатная доставка')
-    # reviews = models.PositiveIntegerField()
     rating = models.PositiveIntegerField()
-    favourite = models.BooleanField(default=False, verbose_name='избранный товар')
 
     class Meta:
         verbose_name = 'продукт'
@@ -30,7 +27,7 @@ class Product(models.Model):
         ]
 
     def href(self):
-        return f'product/{self.pk}'
+        return f'/product/{self.pk}'
 
     def description(self):
         if len(self.fullDescription) > 50:
@@ -39,6 +36,12 @@ class Product(models.Model):
 
     def photoSrc(self):
         return self.images
+
+    def get_price(self):
+        salePrice = self.sales.first()
+        if salePrice:
+            return salePrice.salePrice
+        return self.price
 
     def __str__(self):
         return self.title
@@ -57,7 +60,7 @@ class ProductImage(models.Model):
         return self.image
 
     def __str__(self):
-        return f'{self.image}'
+        return f'/{self.image}'
 
 
 class Tag(models.Model):
@@ -67,6 +70,9 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'тэг'
         verbose_name_plural = 'тэги'
+        indexes = [
+            models.Index(fields=['name'], name='name_ind')
+        ]
 
     def __str__(self):
         return self.name
@@ -74,6 +80,8 @@ class Tag(models.Model):
 
 class Specification(models.Model):
     name = models.CharField(max_length=128, default='', verbose_name='название')
+    category = models.ManyToManyField(Category, related_name='specifications',
+                                      verbose_name='категория')
 
     class Meta:
         verbose_name = 'характеристика'
@@ -99,7 +107,7 @@ class ProductSpecification(models.Model):
 
 
 class Reviews(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews', verbose_name='автор')
+    author = models.CharField(max_length=128, verbose_name='автор')
     email = models.EmailField(max_length=254)
     text = models.TextField(verbose_name='текст')
     rate = models.PositiveSmallIntegerField(blank=False, default=5, verbose_name='оценка')
@@ -115,3 +123,29 @@ class Reviews(models.Model):
         if len(self.text) > 50:
             return f'{self.text[:50]}...'
         return self.text
+
+
+class Sale(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='sales', verbose_name='продукт')
+    salePrice = models.DecimalField(max_digits=10, db_index=True, decimal_places=2, default=0, verbose_name='цена по скидке')
+    dateFrom = models.DateField(default='', verbose_name='старт продаж')
+    dateTo = models.DateField(verbose_name='окончание продаж', blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'распродажа'
+        verbose_name_plural = 'распродажи'
+
+    def price(self):
+        return self.product.price
+
+    def images(self):
+        return self.product.images
+
+    def title(self):
+        return self.product.title
+
+    def href(self):
+        return f'/product/{self.product.pk}'
+
+    def __str__(self):
+        return self.product.title

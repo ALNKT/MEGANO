@@ -18,24 +18,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from users.views import RegisterView, MyLoginView, MyLogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register/', RegisterView.as_view(), name='register'),
-    path('login/', MyLoginView.as_view(), name='login'),
-    path('logout/', MyLogoutView.as_view(), name='logout'),
     path("", include("frontend.urls")),
-    path('api/', include('catalog.urls')),
-    path('api/', include('products.urls')),
-    path('api/', include('users.urls')),
-]
-
-if settings.DEBUG:
-    urlpatterns.extend(
-        static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
-    )
-
-    urlpatterns.extend(
-        static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
-    )
+    path('', include('catalog.urls')),
+    path('', include('products.urls')),
+    path('', include('users.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

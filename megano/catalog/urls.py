@@ -1,8 +1,11 @@
 from django.urls import path
 
-from catalog.views import CategoryView, TagsView
+from catalog.views import CategoryView, TagsView, BannersView, CatalogView
 
 urlpatterns = [
-    path("categories/", CategoryView.as_view()),
-    path("tags/", TagsView.as_view()),
+    path("api/categories/", CategoryView.as_view()),
+    path("api/banners/", BannersView.as_view()),
+    path("api/tags/", TagsView.as_view()),
+    path("api/catalog/", CatalogView.as_view()),
+    # path("api/catalog/<int:pk>", CatalogDetailView.as_view({'get': 'retrieve'})),
 ]
