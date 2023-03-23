@@ -6,6 +6,9 @@ locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 
 
 class SpecificationsSerializer(serializers.ModelSerializer):
+    """
+    Сериализация характеристик продукта
+    """
     specification_name = serializers.StringRelatedField()
     name = serializers.StringRelatedField()
 
@@ -15,6 +18,9 @@ class SpecificationsSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """
+    Сериализация отзывов о продукте
+    """
     date = serializers.DateTimeField(format='%d.%m.%Y %H:%M')
 
     class Meta:
@@ -23,12 +29,18 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class TagsProductSerializer(serializers.ModelSerializer):
+    """
+    Сериализация тегов продукта
+    """
     class Meta:
         model = Tag
         fields = '__all__'
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    """
+    Сериализация продукта
+    """
     images = serializers.StringRelatedField(many=True)
     description = serializers.StringRelatedField()
     tags = TagsProductSerializer(many=True)
@@ -44,9 +56,10 @@ class ProductSerializer(serializers.ModelSerializer):
         exclude = ['limited_edition']
 
 
-
-
 class SaleSerializer(serializers.ModelSerializer):
+    """
+    Сериализация товаров со скидками
+    """
     images = serializers.StringRelatedField(many=True)
     title = serializers.StringRelatedField()
     href = serializers.StringRelatedField()

@@ -12,6 +12,9 @@ from products.serializers import ProductSerializer
 
 
 class CategoryView(APIView):
+    """
+    Представление для получения категорий товаров
+    """
 
     def get(self, request):
         categories = []
@@ -25,6 +28,9 @@ class CategoryView(APIView):
 
 
 class TagsView(APIView):
+    """
+    Представление для получения тэгов товаров
+    """
 
     def get(self, request):
         tags = Tag.objects.all()
@@ -33,10 +39,13 @@ class TagsView(APIView):
 
 
 class BannersView(APIView):
+    """
+    Представление для получения баннеров главной страницы
+    """
 
     def get(self, request):
         categories = []
-        categories_tmp = Category.objects.filter(active=True, favourite=True).prefetch_related('products')
+        categories_tmp = Category.objects.filter(parent=not None, active=True, favourite=True).prefetch_related('products')
         if len(categories_tmp) > 3:
             categories_tmp = random.sample(list(categories_tmp), 3)
         for category in categories_tmp:
@@ -50,7 +59,14 @@ class BannersView(APIView):
 
 
 def sorting_catalog(request):
+    """
+    Сортировка каталога по входящим параметрам
+    :param request: запрос
+    :return: продукты в соответствии с сортировкой
+    """
     category = request.GET.get('category')
+
+    # Если в запросе приходит category=0, то отображаем товары всех категорий, иначе только товары запрашиваемой категории
     if category != '0':
         catalog = Category.objects.get(pk=category).products
     else:
@@ -70,17 +86,25 @@ def sorting_catalog(request):
 
 
 def filter_catalog(request):
+    """
+    Фильтрация каталога по входящим параметрам
+    :param request: запрос
+    :return: продукты в соответствии с фильтрацией
+    """
     filter_name = request.GET
     print(filter_name)
 
 
 class CatalogView(APIView):
+    """
+    Представление для получения товаров каталога
+    """
 
     def get(self, request):
         products = sorting_catalog(request)
         paginator = Paginator(products, 8)
         current_page = paginator.get_page(request.GET.get('page'))
-        if len(products) % 8 == 0:
+        if len(products) % 8 == 0:  # Определяем количество страниц для отображения на сайте
             lastPage = len(products) // 8
         else:
             lastPage = len(products) // 8 + 1

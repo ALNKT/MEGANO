@@ -5,6 +5,9 @@ from products.models import Tag
 
 
 class CategoryIconsSerializer(serializers.ModelSerializer):
+    """
+    Сериализация иконок категорий
+    """
 
     class Meta:
         model = CategoryIcons
@@ -12,6 +15,9 @@ class CategoryIconsSerializer(serializers.ModelSerializer):
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
+    """
+    Сериализация подкатегорий
+    """
     image = CategoryIconsSerializer(many=False, read_only=True)
 
     class Meta:
@@ -20,6 +26,9 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """
+    Сериализация категорий
+    """
     image = CategoryIconsSerializer(many=False, read_only=True)
     subcategories = SubCategorySerializer(many=True, read_only=True)
 
@@ -29,6 +38,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class TagsSerializer(serializers.ModelSerializer):
+    """
+    Сериализация тегов товара
+    """
 
     class Meta:
         model = Tag
@@ -36,6 +48,9 @@ class TagsSerializer(serializers.ModelSerializer):
 
 
 class BannersSerializer(serializers.ModelSerializer):
+    """
+    Сериализация баннеров для главной страницы (категорий товаров)
+    """
     price = serializers.StringRelatedField()
     images = serializers.StringRelatedField(many=True)
 

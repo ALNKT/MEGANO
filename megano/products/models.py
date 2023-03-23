@@ -1,13 +1,21 @@
 from django.db import models
-
 from catalog.models import Category
 
 
 def product_image_directory_path(instance: 'ProductImage', filename):
+    """
+    Получение пути для сохранения изображения продукта
+    :param instance: экземпляр продукта
+    :param filename: имя файла изображения
+    :return: путь для сохранения
+    """
     return f'products/images/{instance.product.pk}/{filename}'
 
 
 class Product(models.Model):
+    """
+    Модель продукта
+    """
     title = models.CharField(max_length=128, verbose_name='название')
     price = models.DecimalField(max_digits=10, db_index=True, decimal_places=2, default=0, verbose_name='цена')
     count = models.PositiveIntegerField(default=0, verbose_name='количество')
@@ -27,18 +35,34 @@ class Product(models.Model):
         ]
 
     def href(self):
+        """
+        Получение ссылки для продукта
+        :return: ссылка на детальную информацию о продукте
+        """
         return f'/product/{self.pk}'
 
     def description(self):
+        """
+        Короткое описание продукта
+        :return: описание
+        """
         if len(self.fullDescription) > 50:
             return f'{self.fullDescription[:50]}...'
         return self.fullDescription
 
     def photoSrc(self):
+        """
+        Получение главного изображения продукта
+        :return: изображение
+        """
         return self.images
 
     def get_price(self):
-        salePrice = self.sales.first()
+        """
+        Получение цены продукта в зависимости от наличия скидки
+        :return: цена
+        """
+        salePrice = self.sales.first()  # Если товар есть в таблице с распродажами, то берем цену из этой таблицы
         if salePrice:
             return salePrice.salePrice
         return self.price
@@ -48,6 +72,9 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
+    """
+    Модель изображения продукта
+    """
     image = models.FileField(upload_to=product_image_directory_path, verbose_name='изображение')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images', verbose_name='продукт')
 
@@ -57,6 +84,10 @@ class ProductImage(models.Model):
         verbose_name_plural = "изображения продуктов"
 
     def src(self):
+        """
+        Получаем ссылку на изображение.
+        :return: изображение
+        """
         return self.image
 
     def __str__(self):
@@ -64,6 +95,9 @@ class ProductImage(models.Model):
 
 
 class Tag(models.Model):
+    """
+    Модель тега
+    """
     name = models.CharField(max_length=128, default='', db_index=True, verbose_name='имя')
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='tags', verbose_name='тэг')
 
@@ -79,6 +113,9 @@ class Tag(models.Model):
 
 
 class Specification(models.Model):
+    """
+    Модель всех характеристик продуктов
+    """
     name = models.CharField(max_length=128, default='', verbose_name='название')
     category = models.ManyToManyField(Category, related_name='specifications',
                                       verbose_name='категория')
@@ -92,6 +129,9 @@ class Specification(models.Model):
 
 
 class ProductSpecification(models.Model):
+    """
+    Модель характеристик конкретного продукта
+    """
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='specifications',
                                 verbose_name='продукт')
     name = models.ForeignKey(Specification, on_delete=models.PROTECT, related_name='specification_name',
@@ -107,6 +147,9 @@ class ProductSpecification(models.Model):
 
 
 class Reviews(models.Model):
+    """
+    Модель отзывов о продукте
+    """
     author = models.CharField(max_length=128, verbose_name='автор')
     email = models.EmailField(max_length=254)
     text = models.TextField(verbose_name='текст')
@@ -126,6 +169,9 @@ class Reviews(models.Model):
 
 
 class Sale(models.Model):
+    """
+    Модель продуктов со скидками
+    """
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='sales', verbose_name='продукт')
     salePrice = models.DecimalField(max_digits=10, db_index=True, decimal_places=2, default=0, verbose_name='цена по скидке')
     dateFrom = models.DateField(default='', verbose_name='старт продаж')
@@ -136,15 +182,31 @@ class Sale(models.Model):
         verbose_name_plural = 'распродажи'
 
     def price(self):
+        """
+        Получение первоначальной цены продукта
+        :return: цена
+        """
         return self.product.price
 
     def images(self):
+        """
+        Получение изображений продукта
+        :return: изображения
+        """
         return self.product.images
 
     def title(self):
+        """
+        Получение названия продукта
+        :return: название продукта
+        """
         return self.product.title
 
     def href(self):
+        """
+        Получение ссылки на детальную страницу продукта
+        :return: ссылка
+        """
         return f'/product/{self.product.pk}'
 
     def __str__(self):

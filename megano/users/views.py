@@ -1,14 +1,11 @@
-from crypt import methods
-
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from rest_framework import viewsets
-from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser, JSONParser
+from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from users.forms import UserRegistrationForm
 from users.models import Profile
@@ -16,6 +13,9 @@ from users.serializers import ProfileSerializer, ProfileAvatarSerializer, UserPa
 
 
 class RegisterView(CreateView):
+    """
+    Представление для регистрации пользователя на сайте
+    """
     form_class = UserRegistrationForm
     template_name = "users/register.html"
     success_url = reverse_lazy('frontend:index')
@@ -32,6 +32,9 @@ class RegisterView(CreateView):
 
 
 class ProfileView(viewsets.ModelViewSet):
+    """
+    Представление для получения и обновления данных профиля пользователя
+    """
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
@@ -50,6 +53,9 @@ class ProfileView(viewsets.ModelViewSet):
 
 
 class ProfileAvatarView(viewsets.ModelViewSet):
+    """
+    Представление для обновления аватара пользователя
+    """
     serializer_class = ProfileAvatarSerializer
     parser_classes = [FileUploadParser]
     permission_classes = [IsAuthenticated]
@@ -65,6 +71,9 @@ class ProfileAvatarView(viewsets.ModelViewSet):
 
 
 class UserChangePasswordView(viewsets.ModelViewSet):
+    """
+    Представление для обновления пароля пользователя
+    """
     serializer_class = UserPasswordChangeSerializer
     permission_classes = [IsAuthenticated]
 
@@ -79,9 +88,15 @@ class UserChangePasswordView(viewsets.ModelViewSet):
 
 
 class MyLoginView(LoginView):
+    """
+    Представление для авторизации пользователя
+    """
     template_name = 'users/login.html'
     redirect_authenticated_user = True
 
 
 class MyLogoutView(LogoutView):
+    """
+    Представление для выхода пользователя из системы
+    """
     next_page = reverse_lazy('users:login')

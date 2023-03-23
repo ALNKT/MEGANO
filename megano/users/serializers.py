@@ -5,6 +5,9 @@ from users.models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Сериализация профиля пользователя
+    """
 
     class Meta:
         model = Profile
@@ -12,6 +15,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileAvatarSerializer(serializers.ModelSerializer):
+    """
+    Сериализация аватара пользователя
+    """
 
     class Meta:
         model = Profile
@@ -19,6 +25,9 @@ class ProfileAvatarSerializer(serializers.ModelSerializer):
 
 
 class UserPasswordChangeSerializer(serializers.ModelSerializer):
+    """
+    Сериализация пароля пользователя
+    """
 
     class Meta:
         model = User

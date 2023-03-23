@@ -11,6 +11,9 @@ from products.serializers import ProductSerializer, ReviewSerializer, SaleSerial
 
 
 class ProductPopularView(APIView):
+    """
+    Представление для отображения популярных продуктов
+    """
 
     def get(self, request):
         products = Product.objects.order_by('-rating')[:8].prefetch_related('images')
@@ -21,6 +24,9 @@ class ProductPopularView(APIView):
 
 
 class ProductDetailView(viewsets.ViewSet):
+    """
+    Представление для отображения детальной страницы продукта
+    """
 
     def retrieve(self, request, pk):
         product = Product.objects.get(pk=pk)
@@ -29,6 +35,9 @@ class ProductDetailView(viewsets.ViewSet):
 
 
 class ProductLimitedView(APIView):
+    """
+    Представление для отображения лимитированных продуктов
+    """
 
     def get(self, request):
         products = Product.objects.filter(limited_edition=True)[:15].prefetch_related('images')
@@ -39,6 +48,9 @@ class ProductLimitedView(APIView):
 
 
 class CreateReviewView(CreateModelMixin, GenericAPIView):
+    """
+    Представление для создания отзывов о продукте
+    """
     serializer_class = ReviewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -58,9 +70,12 @@ class CreateReviewView(CreateModelMixin, GenericAPIView):
 
 
 class SaleView(APIView):
+    """
+    Представление для отображения товаров со скидками
+    """
 
     def get(self, request, *args, **kwargs):
-        count_products_on_page = 8
+        count_products_on_page = 8  # Определяем количество продуктов на странице
         products = Sale.objects.all().select_related('product')
         paginator = Paginator(products, 8)
         current_page = paginator.get_page(request.GET.get('page'))
