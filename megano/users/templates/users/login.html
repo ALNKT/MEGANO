@@ -48,7 +48,7 @@
                 {% if user.is_authenticated %}
                   <div class="row-block"><a class="ControlPanel-title" href="/profile">{{ user.username }}</a>
                 {% else %}
-                  <div class="row-block"><a class="ControlPanel-title" href="/register">Зарегистрироваться</a>
+                  <div class="row-block"><a class="ControlPanel-title" href="{% url 'users:register' %}">Зарегистрироваться</a>
                 {% endif %}
               </div>
             </div>

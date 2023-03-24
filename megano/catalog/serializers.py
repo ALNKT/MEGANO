@@ -1,17 +1,24 @@
 from rest_framework import serializers
 
-from catalog.models import Category, CategoryImage
+from catalog.models import Category, CategoryIcons
 from products.models import Tag
 
 
-class CategoryImageSerializer(serializers.ModelSerializer):
+class CategoryIconsSerializer(serializers.ModelSerializer):
+    """
+    Сериализация иконок категорий
+    """
+
     class Meta:
-        model = CategoryImage
+        model = CategoryIcons
         fields = ['src', 'alt']
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
-    image = CategoryImageSerializer(many=False)
+    """
+    Сериализация подкатегорий
+    """
+    image = CategoryIconsSerializer(many=False, read_only=True)
 
     class Meta:
         model = Category
@@ -19,8 +26,11 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    image = CategoryImageSerializer(many=False)
-    subcategories = SubCategorySerializer(many=True)
+    """
+    Сериализация категорий
+    """
+    image = CategoryIconsSerializer(many=False, read_only=True)
+    subcategories = SubCategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Category
@@ -28,7 +38,22 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class TagsSerializer(serializers.ModelSerializer):
+    """
+    Сериализация тегов товара
+    """
 
     class Meta:
         model = Tag
         exclude = ['product']
+
+
+class BannersSerializer(serializers.ModelSerializer):
+    """
+    Сериализация баннеров для главной страницы (категорий товаров)
+    """
+    price = serializers.StringRelatedField()
+    images = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Category
+        fields = ['title', 'href', 'price', 'images']

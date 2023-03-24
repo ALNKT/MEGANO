@@ -37,11 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admindocs',
     'frontend',
     'rest_framework',
     'catalog.apps.CatalogConfig',
     'users.apps.UsersConfig',
     'products.apps.ProductsConfig',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -107,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -116,12 +118,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR.parent, 'diploma-frontend', 'frontend', 'static'),)
 
-MEDIA_URL = 'product/'
-MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'diploma-frontend', 'frontend')
-
+MEDIA_URL = '/'
+MEDIA_ROOT = BASE_DIR
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -129,4 +130,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'diploma-frontend', 'frontend')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = reverse_lazy("frontend:profile")
-# LOGIN_URL = reverse_lazy("app_users:login")
+# LOGIN_URL = reverse_lazy("users:login")

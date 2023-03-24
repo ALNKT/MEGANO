@@ -30,7 +30,7 @@ var mix = {
             this.getCatalogs()
         },
         getTags() {
-            this.getData('/api/tags', { category: this.category })
+            this.getData('/api/tags/', { category: this.category })
                 .then(data => this.topTags = data.map(tag => ({
                     ...tag,
                     selected: false
@@ -44,9 +44,13 @@ var mix = {
             if(typeof page === "undefined") {
                 page = 1
             }
-            const PAGE_LIMIT = 20
+            const PAGE_LIMIT = 2
+            this.category = location.pathname.startsWith('/catalog/')
+            ? Number(location.pathname.replace('/catalog/', ''))
+            : null
+
             const tags = this.topTags.filter(tag => !!tag.selected).map(tag => tag.id)
-            this.getData("/api/catalog", {
+            this.getData("/api/catalog/", {
                 page,
                 category: this.category,
                 sort: this.selectedSort ? this.selectedSort.id : null,

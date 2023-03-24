@@ -1,36 +1,61 @@
 from django.contrib import admin
-
-from products.models import Product, ProductImage, Tag, Specification, ProductSpecification
+from catalog.models import Category
+from products.models import Product, ProductImage, Tag, Specification, ProductSpecification, Sale
 
 
 class ProductImages(admin.TabularInline):
+    """
+    Связываем изображения с продуктами
+    """
     model = ProductImage
 
 
 class ProductSpecifications(admin.TabularInline):
+    """
+    Связываем характеристики с продуктами
+    """
     model = ProductSpecification
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """
+        Получение полей формы для внешнего ключа связи
+        """
+        if db_field.name == "name":
+            pk_product = str(request).split('/')[4]
+            product = Product.objects.get(pk=pk_product)
+            specifications = Specification.objects.filter(category=product.category)
+            kwargs["queryset"] = specifications
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    """
+    Отображение продуктов в административной панели
+    """
     list_display = [
         'pk',
         'title',
         'price',
         'count',
         'category',
+        'limited_edition',
+        # 'freeDelivery',
     ]
     list_display_links = ['pk', 'title']
     inlines = [ProductImages, ProductSpecifications]
-    list_filter = ['limited_edition', 'freeDelivery', 'favourite', 'rating']
+    list_filter = ['limited_edition', 'freeDelivery', 'rating']
     search_fields = ['title', 'category', 'price']
+    # radio_fields = {"category": admin.VERTICAL}
+    # raw_id_fields = ['category']
+    # list_editable = ['freeDelivery']
     fieldsets = (
         ('О продукте', {
             'fields': ('category', 'title', ('price', 'count', 'rating'))
         }),
         ('Дополнительные параметры', {
             'classes': ('collapse',),
-            'fields': ('limited_edition', 'freeDelivery', 'favourite')
+            'fields': ('limited_edition', 'freeDelivery')
         }),
         ('Описание товара', {
             'classes': ('collapse',),
@@ -38,21 +63,55 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """
+        Получение полей формы для внешнего ключа связи
+        """
+        if db_field.name == "category":
+            kwargs["queryset"] = Category.objects.filter(parent__gte=1)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
+    """
+    Отображение в административной панели изображений продуктов
+    """
     list_display = ['pk', 'product']
     list_display_links = ['pk', 'product']
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
+    """
+    Отображение тегов в административной панели
+    """
     list_display = ['pk', 'name']
     list_display_links = ['pk', 'name']
+
+
+class CategoryOfSpecification(admin.TabularInline):
+    """
+    Связываем характеристики продуктов с категорией
+    """
+    model = Specification.category.through
 
 
 @admin.register(Specification)
 class SpecificationAdmin(admin.ModelAdmin):
+    """
+    Отображение в административной панели характеристик продуктов
+    """
     list_display = ['pk', 'name']
     list_display_links = ['pk', 'name']
+    inlines = [CategoryOfSpecification]
+    exclude = ['category']
+
+
+@admin.register(Sale)
+class SaleAdmin(admin.ModelAdmin):
+    """
+    Отображение в административной панели продуктов, участвующих в распродаже
+    """
+    list_display = ['pk', 'product', 'price', 'salePrice']
+    list_display_links = ['pk', 'product']

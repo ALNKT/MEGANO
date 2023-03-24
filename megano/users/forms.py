@@ -8,7 +8,10 @@ from users.models import Profile
 
 
 class UserRegistrationForm(UserCreationForm):
-    fullname = forms.CharField(required=True, label='Ф.И.О.', widget=forms.TextInput)
+    """
+    Форма для регистрации пользователя на сайте
+    """
+    fullName = forms.CharField(required=True, label='Ф.И.О.', widget=forms.TextInput)
     phone = forms.CharField(required=True, label='Номер телефона', widget=forms.TextInput)
     password1 = forms.CharField(required=True, label='Пароль', widget=forms.PasswordInput,
                                 help_text=password_validation.password_validators_help_text_html())
@@ -23,10 +26,14 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username", 'fullname', 'email', 'phone', 'password1', 'password2')
+        fields = ("username", 'fullName', 'email', 'phone', 'password1', 'password2')
         field_classes = {"username": UsernameField}
 
     def clean_phone(self):
+        """
+        Определение уникальности номера телефона на сайте
+        :return: номер телефона
+        """
         phone = self.cleaned_data.get("phone")
         phone_in_db = Profile.objects.filter(phone=phone)
         if phone_in_db:
@@ -37,6 +44,10 @@ class UserRegistrationForm(UserCreationForm):
         return phone
 
     def clean_email(self):
+        """
+        Определение уникальности email на сайте
+        :return: email address
+        """
         email = self.cleaned_data.get("email")
         email_in_db = User.objects.filter(email=email)
         if email_in_db:

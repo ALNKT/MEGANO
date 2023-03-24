@@ -48,7 +48,7 @@
                 {% if user.is_authenticated %}
                   <div class="row-block"><a class="ControlPanel-title" href="/profile">{{ user.username }}</a>
                 {% else %}
-                  <div class="row-block"><a class="ControlPanel-title" href="/login">Войти</a>
+                  <div class="row-block"><a class="ControlPanel-title" href="{% url 'users:login' %}">Войти</a>
                 {% endif %}
               </div>
             </div>
@@ -69,7 +69,7 @@
         {% csrf_token %}
         {{ form.as_div }}
           <input class="my_button" type="submit" value="Зарегистрироваться"/>
-          <a class="my_login" href="{% url 'login' %}">Вход</a>
+          <a class="my_login" href="{% url 'users:login' %}">Вход</a>
       </form>
   </div>
   <footer class="Footer">

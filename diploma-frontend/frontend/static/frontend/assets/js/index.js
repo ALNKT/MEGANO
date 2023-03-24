@@ -1,7 +1,7 @@
 var mix = {
     methods: {
         getBanners() {
-            this.getData("/api/banners")
+            this.getData("/api/banners/")
               .then(data => {
                 this.banners = data.banners
               }).catch(() => {
@@ -10,7 +10,7 @@ var mix = {
               })
         },
         getPopularProducts() {
-            this.getData("/api/products/popular")
+            this.getData("/api/products/popular/")
               .then(data => {
                 this.popularCards = data
               }).catch(() => {
@@ -19,7 +19,7 @@ var mix = {
             })
         },
         getLimitedProducts() {
-            this.getData("/api/products/limited")
+            this.getData("/api/products/limited/")
               .then(data => {
                 this.limitedCards = data
               }).catch(() => {
