@@ -1,5 +1,6 @@
 from django.contrib import admin
 from catalog.models import Category, CategoryIcons
+from products.models import Product
 
 
 class ImageCategory(admin.TabularInline):
@@ -40,6 +41,7 @@ class CategoryAdmin(admin.ModelAdmin):
         :param category: категория
         """
         updated = category.update(active=False)
+        Product.objects.filter(category__in=category).update(active=False)
         self.message_user(request, message=f'Категорий отмечено НЕАКТИВНОЙ: {updated}')
 
     @admin.action(description='Отметить, как избранная')

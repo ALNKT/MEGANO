@@ -40,12 +40,14 @@ class ProductAdmin(admin.ModelAdmin):
         'count',
         'category',
         'limited_edition',
+        'active'
         # 'freeDelivery',
     ]
     list_display_links = ['pk', 'title']
     inlines = [ProductImages, ProductSpecifications]
-    list_filter = ['limited_edition', 'freeDelivery', 'rating']
+    list_filter = ['active', 'limited_edition', 'freeDelivery', 'rating']
     search_fields = ['title', 'category', 'price']
+    actions = ['make_active', 'make_inactive']
     # radio_fields = {"category": admin.VERTICAL}
     # raw_id_fields = ['category']
     # list_editable = ['freeDelivery']
@@ -55,7 +57,7 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         ('Дополнительные параметры', {
             'classes': ('collapse',),
-            'fields': ('limited_edition', 'freeDelivery')
+            'fields': ('limited_edition', 'freeDelivery', 'active')
         }),
         ('Описание товара', {
             'classes': ('collapse',),
@@ -70,6 +72,26 @@ class ProductAdmin(admin.ModelAdmin):
         if db_field.name == "category":
             kwargs["queryset"] = Category.objects.filter(parent__gte=1)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    @admin.action(description='Отметить, как активный продукт')
+    def make_active(self, request, product):
+        """
+        Действие для установки категории активной
+        :param request: запрос
+        :param product: категория
+        """
+        updated = product.update(active=True)
+        self.message_user(request, message=f'Продуктов отмечено АКТИВНЫМИ: {updated}')
+
+    @admin.action(description='Отметить, как неактивный продукт')
+    def make_inactive(self, request, product):
+        """
+        Действие для установки категории НЕ активной
+        :param request: запрос
+        :param product: категория
+        """
+        updated = product.update(active=False)
+        self.message_user(request, message=f'Продуктов отмечено НЕАКТИВНЫМИ: {updated}')
 
 
 @admin.register(ProductImage)

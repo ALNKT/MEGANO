@@ -26,6 +26,7 @@ class Product(models.Model):
     limited_edition = models.BooleanField(default=False, verbose_name='ограниченная серия')
     freeDelivery = models.BooleanField(default=False, verbose_name='бесплатная доставка')
     rating = models.PositiveIntegerField()
+    active = models.BooleanField(default=False, verbose_name='активный')
 
     class Meta:
         verbose_name = 'продукт'
