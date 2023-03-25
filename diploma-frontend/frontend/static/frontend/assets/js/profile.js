@@ -61,6 +61,7 @@ var mix = {
                 },
             }).then((data) => {
                 this.avatar = data.url
+                this.getProfile()
             }).catch(() => {
                  console.warn('Ошибка при обновлении изображения')
             })

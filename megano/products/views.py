@@ -1,9 +1,11 @@
 from datetime import datetime
 
 from django.core.paginator import Paginator
+from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import CreateModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from products.models import Product, Reviews, Sale
@@ -16,7 +18,7 @@ class ProductPopularView(APIView):
     """
 
     def get(self, request):
-        products = Product.objects.order_by('-rating')[:8].prefetch_related('images')
+        products = Product.objects.filter(active=True).order_by('-rating')[:8].prefetch_related('images')
         for product in products:
             product.categoryName = product.category
         serializer = ProductSerializer(products, many=True)
@@ -40,7 +42,7 @@ class ProductLimitedView(APIView):
     """
 
     def get(self, request):
-        products = Product.objects.filter(limited_edition=True)[:15].prefetch_related('images')
+        products = Product.objects.filter(limited_edition=True, active=True)[:15].prefetch_related('images')
         for product in products:
             product.categoryName = product.category
         serializer = ProductSerializer(products, many=True)
@@ -52,6 +54,7 @@ class CreateReviewView(CreateModelMixin, GenericAPIView):
     Представление для создания отзывов о продукте
     """
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -76,7 +79,8 @@ class SaleView(APIView):
 
     def get(self, request, *args, **kwargs):
         count_products_on_page = 8  # Определяем количество продуктов на странице
-        products = Sale.objects.all().select_related('product')
+        products = Sale.objects.filter(Q(dateFrom__gte=datetime.today()) | Q(dateTo__gte=datetime.today())).select_related('product')
+        products = [product_sale for product_sale in products if product_sale.product.active]
         paginator = Paginator(products, 8)
         current_page = paginator.get_page(request.GET.get('page'))
         if len(products) % count_products_on_page == 0:

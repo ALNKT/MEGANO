@@ -45,7 +45,7 @@ class BannersView(APIView):
 
     def get(self, request):
         categories = []
-        categories_tmp = Category.objects.filter(parent=not None, active=True, favourite=True).prefetch_related('products')
+        categories_tmp = Category.objects.filter(parent__gte=1, active=True, favourite=True).prefetch_related('products')
         if len(categories_tmp) > 3:
             categories_tmp = random.sample(list(categories_tmp), 3)
         for category in categories_tmp:
@@ -68,7 +68,7 @@ def sorting_catalog(request):
 
     # Если в запросе приходит category=0, то отображаем товары всех категорий, иначе только товары запрашиваемой категории
     if category != '0':
-        catalog = Category.objects.get(pk=category).products
+        catalog = Category.objects.get(pk=category, active=True).products
     else:
         catalog = Product.objects
     sort = request.GET.get('sort')
@@ -78,10 +78,10 @@ def sorting_catalog(request):
     else:
         sortType = ''
     if sort == 'reviews':
-        products = catalog.annotate(count_reviews=Count('reviews')).order_by(f'{sortType}count_reviews').\
+        products = catalog.filter(active=True).annotate(count_reviews=Count('reviews')).order_by(f'{sortType}count_reviews').\
             prefetch_related('images', 'reviews')
     else:
-        products = catalog.order_by(f'{sortType}{sort}').prefetch_related('images', 'reviews')
+        products = catalog.filter(active=True).order_by(f'{sortType}{sort}').prefetch_related('images', 'reviews')
     return products
 
 

@@ -1154,6 +1154,7 @@ a.Cart-title {
 .Cart-price {
   font-size: 22px;
   color: #0063d1;
+  width: 150px;
 }
 .Cart-price_old {
   color: #999;
@@ -1269,6 +1270,7 @@ a.Cart-title {
   text-transform: uppercase;
   letter-spacing: 1.3px;
   display: block;
+  width: max-content;
 }
 
 .Categories {
