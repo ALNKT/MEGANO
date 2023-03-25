@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'products.apps.ProductsConfig',
     'drf_yasg',
+    'cart.apps.CartConfig',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = reverse_lazy("frontend:profile")
 # LOGIN_URL = reverse_lazy("users:login")
+
+CART_SESSION_ID = 'cart'
