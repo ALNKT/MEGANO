@@ -68,6 +68,9 @@ class Product(models.Model):
             return salePrice.salePrice
         return self.price
 
+    def id(self):
+        return f'{self.pk}'
+
     def __str__(self):
         return self.title
 
@@ -100,7 +103,7 @@ class Tag(models.Model):
     Модель тега
     """
     name = models.CharField(max_length=128, default='', db_index=True, verbose_name='имя')
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='tags', verbose_name='тэг')
+    product = models.ManyToManyField(Product, related_name='tags', verbose_name='тэг')
 
     class Meta:
         verbose_name = 'тэг'

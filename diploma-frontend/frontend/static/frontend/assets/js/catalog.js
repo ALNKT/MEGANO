@@ -56,7 +56,7 @@ var mix = {
                 sort: this.selectedSort ? this.selectedSort.id : null,
                 sortType: this.selectedSort ? this.selectedSort.selected : null,
                 filter: this.filter,
-                tags,
+                tags: String(tags),
                 limit: PAGE_LIMIT
             })
                 .then(data => {

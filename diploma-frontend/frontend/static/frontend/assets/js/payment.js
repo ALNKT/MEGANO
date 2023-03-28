@@ -6,9 +6,12 @@ var mix = {
                 number: this.number,
                 year: this.year,
                 month: this.month,
-                code: this.code
+                code: this.code,
+                order: this.order.id,
+                totalCost: this.order.totalCost
             }).then(() => {
                 alert('Успешная оплата')
+                location.assign('/progress-payment/')
                 this.number = ''
                 this.name = ''
                 this.year = ''

@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 import locale
 from products.models import Product, ProductSpecification, Reviews, Tag, Sale
@@ -21,11 +23,15 @@ class ReviewSerializer(serializers.ModelSerializer):
     """
     Сериализация отзывов о продукте
     """
-    date = serializers.DateTimeField(format='%d.%m.%Y %H:%M')
+    date = serializers.SerializerMethodField()
 
     class Meta:
         model = Reviews
         fields = ['author', 'email', 'text', 'rate', 'date', 'product']
+
+    def get_date(self, instance):
+        date = instance.date + datetime.timedelta(hours=3)
+        return datetime.datetime.strftime(date, '%d.%m.%Y %H:%M')
 
 
 class TagsProductSerializer(serializers.ModelSerializer):
@@ -41,19 +47,45 @@ class ProductSerializer(serializers.ModelSerializer):
     """
     Сериализация продукта
     """
-    images = serializers.StringRelatedField(many=True)
+    images = serializers.SerializerMethodField()
     description = serializers.StringRelatedField()
-    tags = TagsProductSerializer(many=True)
-    specifications = SpecificationsSerializer(many=True)
-    reviews = ReviewSerializer(many=True)
+    tags = TagsProductSerializer(many=True, required=False)
+    specifications = SpecificationsSerializer(many=True, required=False)
+    reviews = ReviewSerializer(many=True, required=False)
     href = serializers.StringRelatedField()
-    photoSrc = serializers.StringRelatedField(many=True)
+    photoSrc = serializers.SerializerMethodField()
     categoryName = serializers.StringRelatedField()
-    price = serializers.DecimalField(source='get_price', max_digits=10, decimal_places=2)
+    price = serializers.SerializerMethodField()
+    id = serializers.IntegerField()
 
     class Meta:
         model = Product
         exclude = ['limited_edition']
+
+    def get_photoSrc(self, instance):
+        """
+        Получение главного изображения продукта
+        :return: изображение
+        """
+        src = [str(instance.images.first())]
+        return src
+
+    def get_images(self, instance):
+        images = []
+        images_tmp = instance.images.all()
+        for image in images_tmp:
+            images.append(image.__str__())
+        return images
+
+    def get_price(self, instance):
+        """
+        Получение цены продукта в зависимости от наличия скидки
+        :return: цена
+        """
+        salePrice = instance.sales.first()  # Если товар есть в таблице с распродажами, то берем цену из этой таблицы
+        if salePrice:
+            return salePrice.salePrice
+        return instance.price
 
 
 class SaleSerializer(serializers.ModelSerializer):

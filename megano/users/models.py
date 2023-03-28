@@ -21,3 +21,10 @@ class Profile(models.Model):
     email = models.EmailField(max_length=128)
     phone = models.CharField(max_length=64, verbose_name='телефон')
     avatar = models.FileField(verbose_name='аватар', upload_to=upload_profile_avatar, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'профиль'
+        verbose_name_plural = 'профили'
+
+    def __str__(self):
+        return self.user.username

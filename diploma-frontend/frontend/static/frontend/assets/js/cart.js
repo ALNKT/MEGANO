@@ -12,7 +12,7 @@ var mix = {
                     this.order.id = data.id
                     this.order.products = data.products
                     this.basket = {}
-                    location.assign('/order')
+                    location.assign('/order/')
                 }).catch(() => {
                     console.warn('Ошибка при создании заказа')
                 })
