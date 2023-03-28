@@ -97,6 +97,7 @@ def filter_catalog(request):
     available = request.query_params.get('filter[available]').capitalize()
     freeDelivery = request.query_params.get('filter[freeDelivery]').capitalize()
     tags = request.query_params.get('tags', '').split(',')
+    search = request.query_params.get('filter[search]', '')
     min_price = (request.query_params.get('filter[minPrice]'))
     max_price = (request.GET.get('filter[maxPrice]'))
     if category != '0':
@@ -112,6 +113,8 @@ def filter_catalog(request):
                 catalog = catalog.filter(title__iregex=title, count__gt=0, freeDelivery=True).prefetch_related('images')
         elif tags != ['']:
             catalog = catalog.filter(title__iregex=title, count__gt=0, tags__in=tags).prefetch_related('images', 'tags')
+        elif search:
+            catalog = catalog.filter(title__iregex=search, count__gt=0).prefetch_related('images')
         else:
             catalog = catalog.filter(title__iregex=title, count__gt=0).prefetch_related('images')
     elif freeDelivery == 'True':

@@ -93,7 +93,8 @@ var mix = {
                 minPrice: 0,
                 maxPrice: 50000,
                 freeDelivery: false,
-                available: true
+                available: true,
+                search: decodeURI(window.location.search.replace('?filter=', ''))
             }
         }
     }
