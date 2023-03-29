@@ -56,7 +56,7 @@ var mix = {
                 sort: this.selectedSort ? this.selectedSort.id : null,
                 sortType: this.selectedSort ? this.selectedSort.selected : null,
                 filter: this.filter,
-                tags,
+                tags: String(tags),
                 limit: PAGE_LIMIT
             })
                 .then(data => {
@@ -93,7 +93,8 @@ var mix = {
                 minPrice: 0,
                 maxPrice: 50000,
                 freeDelivery: false,
-                available: true
+                available: true,
+                search: decodeURI(window.location.search.replace('?filter=', ''))
             }
         }
     }
