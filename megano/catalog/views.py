@@ -45,7 +45,8 @@ class BannersView(APIView):
 
     def get(self, request):
         categories = []
-        categories_tmp = Category.objects.filter(parent__isnull=False, active=True, favourite=True).prefetch_related('products')
+        categories_tmp = Category.objects.filter(parent__isnull=False, active=True, favourite=True).prefetch_related(
+            'products')
         if len(categories_tmp) > 3:
             categories_tmp = random.sample(list(categories_tmp), 3)
         for category in categories_tmp:
@@ -79,7 +80,8 @@ def sorting_catalog(request, products):
     else:
         sortType = ''
     if sort == 'reviews':
-        products = products.filter(active=True).annotate(count_reviews=Count('reviews')).order_by(f'{sortType}count_reviews').\
+        products = products.filter(active=True).annotate(count_reviews=Count('reviews')).order_by(
+            f'{sortType}count_reviews'). \
             prefetch_related('images', 'reviews')
     else:
         products = products.filter(active=True).order_by(f'{sortType}{sort}').prefetch_related('images', 'reviews')
@@ -107,26 +109,33 @@ def filter_catalog(request):
     if available == 'True':
         if freeDelivery == 'True':
             if tags != ['']:
-                catalog = catalog.filter(
-                    title__iregex=title, count__gt=0, freeDelivery=True, tags__in=tags).prefetch_related('images', 'tags')
+                catalog = (catalog.filter(
+                        title__iregex=title, price__range=(min_price, max_price), count__gt=0, freeDelivery=True,
+                        tags__in=tags).prefetch_related('images', 'tags'))
             else:
-                catalog = catalog.filter(title__iregex=title, count__gt=0, freeDelivery=True).prefetch_related('images')
+                catalog = catalog.filter(title__iregex=title, price__range=(min_price, max_price), count__gt=0,
+                                         freeDelivery=True).prefetch_related('images')
         elif tags != ['']:
-            catalog = catalog.filter(title__iregex=title, count__gt=0, tags__in=tags).prefetch_related('images', 'tags')
+            catalog = catalog.filter(title__iregex=title, price__range=(min_price, max_price), count__gt=0,
+                                     tags__in=tags).prefetch_related('images', 'tags')
         elif search:
-            catalog = catalog.filter(title__iregex=search, count__gt=0).prefetch_related('images')
+            catalog = catalog.filter(title__iregex=search, price__range=(min_price, max_price),
+                                     count__gt=0).prefetch_related('images')
         else:
-            catalog = catalog.filter(title__iregex=title, count__gt=0).prefetch_related('images')
+            catalog = catalog.filter(title__iregex=title, price__range=(min_price, max_price),
+                                     count__gt=0).prefetch_related('images')
     elif freeDelivery == 'True':
         if tags != ['']:
-            catalog = catalog.filter(title__iregex=title, freeDelivery=True, tags__in=tags).prefetch_related(
-                'images', 'tags')
+            catalog = catalog.filter(title__iregex=title, price__range=(min_price, max_price), freeDelivery=True,
+                                     tags__in=tags).prefetch_related('images', 'tags')
         else:
-            catalog = catalog.filter(title__iregex=title, freeDelivery=True).prefetch_related('images')
+            catalog = catalog.filter(title__iregex=title, price__range=(min_price, max_price),
+                                     freeDelivery=True).prefetch_related('images')
     elif tags != ['']:
-        catalog = catalog.filter(title__iregex=title, tags__in=tags).prefetch_related('images', 'tags')
+        catalog = catalog.filter(title__iregex=title, price__range=(min_price, max_price),
+                                 tags__in=tags).prefetch_related('images', 'tags')
     else:
-        catalog = catalog.filter(title__iregex=title, price__range=[min_price, max_price]).prefetch_related('images')
+        catalog = catalog.filter(title__iregex=title, price__range=(min_price, max_price)).prefetch_related('images')
     return catalog
 
 
