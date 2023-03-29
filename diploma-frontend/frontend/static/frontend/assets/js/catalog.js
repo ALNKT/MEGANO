@@ -49,13 +49,20 @@ var mix = {
             ? Number(location.pathname.replace('/catalog/', ''))
             : null
 
+            const min = document.querySelector('input[name=minPrice]').value
+            const max =  document.querySelector('input[name=maxPrice]').value
+
             const tags = this.topTags.filter(tag => !!tag.selected).map(tag => tag.id)
             this.getData("/api/catalog/", {
                 page,
                 category: this.category,
                 sort: this.selectedSort ? this.selectedSort.id : null,
                 sortType: this.selectedSort ? this.selectedSort.selected : null,
-                filter: this.filter,
+                filter: {
+                    ...this.filter,
+                    minPrice: min,
+                    maxPrice: max
+                },
                 tags: String(tags),
                 limit: PAGE_LIMIT
             })
