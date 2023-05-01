@@ -16,7 +16,6 @@ class Cart(object):
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
         if not cart:
-            # Сохраняем пустую корзину в сессии
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
 
@@ -36,9 +35,7 @@ class Cart(object):
         """
         Сохранение корзины
         """
-        # Обновление сессии cart
         self.session[settings.CART_SESSION_ID] = self.cart
-        # Отметить сеанс как "измененный", чтобы убедиться, что он сохранен
         self.session.modified = True
 
     def remove(self, product, count=1):
@@ -58,7 +55,6 @@ class Cart(object):
         Перебор элементов в корзине и получение продуктов из базы данных.
         """
         product_ids = self.cart.keys()
-        # получение объектов product и добавление их в корзину
         products = Product.objects.filter(id__in=product_ids)
         for product in products:
             self.cart[str(product.id)]['product'] = product
@@ -82,6 +78,5 @@ class Cart(object):
                    self.cart.values())
 
     def clear(self):
-        # удаление корзины из сессии
         del self.session[settings.CART_SESSION_ID]
         self.session.modified = True

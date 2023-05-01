@@ -41,16 +41,12 @@ class ProductAdmin(admin.ModelAdmin):
         'category',
         'limited_edition',
         'active'
-        # 'freeDelivery',
     ]
     list_display_links = ['pk', 'title']
     inlines = [ProductImages, ProductSpecifications]
     list_filter = ['active', 'limited_edition', 'freeDelivery', 'rating']
     search_fields = ['title', 'category', 'price']
     actions = ['make_active', 'make_inactive']
-    # radio_fields = {"category": admin.VERTICAL}
-    # raw_id_fields = ['category']
-    # list_editable = ['freeDelivery']
     fieldsets = (
         ('О продукте', {
             'fields': ('category', 'title', ('price', 'count', 'rating'))

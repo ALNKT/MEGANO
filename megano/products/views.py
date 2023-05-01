@@ -78,7 +78,7 @@ class SaleView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        count_products_on_page = 8  # Определяем количество продуктов на странице
+        count_products_on_page = 8
         products = (Sale.objects.filter(Q(dateFrom__gte=datetime.today()) | Q(dateTo__gte=datetime.today())).
                     select_related('product').filter(product__active=True))
         paginator = Paginator(products, 8)

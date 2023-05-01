@@ -82,7 +82,7 @@ class ProductSerializer(serializers.ModelSerializer):
         Получение цены продукта в зависимости от наличия скидки
         :return: цена
         """
-        salePrice = instance.sales.first()  # Если товар есть в таблице с распродажами, то берем цену из этой таблицы
+        salePrice = instance.sales.first()
         if salePrice:
             return salePrice.salePrice
         return instance.price

@@ -63,7 +63,7 @@ class Product(models.Model):
         Получение цены продукта в зависимости от наличия скидки
         :return: цена
         """
-        salePrice = self.sales.first()  # Если товар есть в таблице с распродажами, то берем цену из этой таблицы
+        salePrice = self.sales.first()
         if salePrice:
             return salePrice.salePrice
         return self.price
@@ -145,9 +145,6 @@ class ProductSpecification(models.Model):
     class Meta:
         verbose_name = 'характеристика продукта'
         verbose_name_plural = 'характеристики продуктов'
-
-    # def __str__(self):
-    #     return f'{self.name}'
 
 
 class Reviews(models.Model):

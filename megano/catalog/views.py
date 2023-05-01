@@ -66,13 +66,6 @@ def sorting_catalog(request, products):
     :param request: запрос
     :return: продукты в соответствии с сортировкой
     """
-    # category = request.GET.get('category')
-
-    # Если в запросе приходит category=0, то отображаем товары всех категорий, иначе только товары запрашиваемой категории
-    # if category != '0':
-    #     catalog = Category.objects.get(pk=category, active=True).products
-    # else:
-    #     catalog = Product.objects
     sort = request.GET.get('sort')
     sortType = request.GET.get('sortType')
     if sortType == 'inc':
@@ -149,7 +142,7 @@ class CatalogView(APIView):
         products = sorting_catalog(request, products)
         paginator = Paginator(products, 8)
         current_page = paginator.get_page(request.GET.get('page'))
-        if len(products) % 8 == 0:  # Определяем количество страниц для отображения на сайте
+        if len(products) % 8 == 0:
             lastPage = len(products) // 8
         else:
             lastPage = len(products) // 8 + 1
