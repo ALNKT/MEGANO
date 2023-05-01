@@ -51,6 +51,14 @@ var mix = {
 
             const min = document.querySelector('input[name=minPrice]').value
             const max =  document.querySelector('input[name=maxPrice]').value
+            
+            if (min !== 0) {
+                this.filter.minPrice = min
+            }
+            if (max !== 50000) {
+                this.filter.maxPrice = max
+            }
+
 
             const tags = this.topTags.filter(tag => !!tag.selected).map(tag => tag.id)
             this.getData("/api/catalog/", {
